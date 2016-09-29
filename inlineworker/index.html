@@ -15,6 +15,22 @@
     // Rest of your worker code goes here.
   </script>
 
+  <script id="worker2" type="javascript/worker">
+    self.onmessage = function(e) {
+      var data = e.data;
+
+      if (data.url) {
+        var url = data.url;
+        var index = url.indexOf('index.html');
+        if (index != -1) {
+          url = url.substring(0, index);
+        }
+        console.log(url + 'engine.js');
+        importScripts(url + 'engine.js');
+      }
+    };
+  </script>
+
   <script>
     function log(msg) {
       // Use a fragment: browser will only render/reflow once.
@@ -39,6 +55,12 @@
       log("Received: " + e.data);
     }
     worker.postMessage('test'); // Start the worker.
+
+    var worker2 = new Worker(window.URL.createObjectURL(new Blob([document.querySelector('#worker2').textContent])));
+    worker2.onmessage = function(e) {
+      log("Received: " + e.data);
+    }
+    worker2.postMessage({'url': document.location.href}); // Start the worker.
   </script>
 </body>
 </html>
