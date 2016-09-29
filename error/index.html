@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <div>
+    <div>
+      <input id='a' value='10' /> / <input id='b' value='1' />
+    </div>
+    <div>
+      <input type='button' value='challenge' onclick='onClick()' />
+  </div>
+  <div>
+    <output id="error" style="color: red;"></output>
+    <output id="result"></output>
+  </div>
+  <script>
+    function onError(e) {
+      document.getElementById('error').textContent = [
+        'ERROR: Line ', e.lineno, ' in ', e.filename, ': ', e.message
+      ].join('');
+    }
+  
+    function onMsg(e) {
+      document.getElementById('result').textContent = e.data;
+    }
+
+    function onClick(e) {
+      worker.postMessage({
+        a: document.querySelector('#a').value,
+        b: document.querySelector('#b').value
+      });
+    }
+
+    var worker = new Worker('workerWithError.js');
+    worker.addEventListener('message', onMsg, false);
+    worker.addEventListener('error', onError, false);
+    //worker.postMessage(); // Start worker without a message.
+  </script>
+</body>
+</html>
